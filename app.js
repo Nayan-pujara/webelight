@@ -1,21 +1,42 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
+const path = require('path');
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
 
-dotenv.config({ path: "./.env" });
+// Error Controller
+const globalErrorHandler = require('./controllers/errorController');
+const AppError = require('./utility/appError');
+
+// Routers
+const userRouter = require('./routes/userRoutes');
+
+dotenv.config({ path: './.env' });
 
 const app = express();
 
-app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(morgan('dev'));
 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  res.send("Webelight api working.");
+// Test api
+app.get('/', (req, res) => {
+  res.send('Webelight api working.');
 });
+
+// Routes
+app.use('/api/v1/users', userRouter);
+
+// Wild card route for unknown routes
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.method} ${req.originalUrl} route on this server.`, 404));
+});
+
+app.use(globalErrorHandler);
 
 mongoose
   .connect(process.env.DATABASE, {
@@ -23,7 +44,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Database connected");
+    console.log('Database connected');
   });
 
 const port = process.env.PORT || 3000;

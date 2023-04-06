@@ -1,0 +1,5 @@
+Project Setup : 30min
+User Management: 1 Hour
+Authentication: 1 Hour
+Product Management: 1 Hour
+Swagger Doc: 30min

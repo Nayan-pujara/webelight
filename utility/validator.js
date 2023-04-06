@@ -28,6 +28,15 @@ exports.validator = {
       .withMessage('New password length at least have to be 8 character.'),
     body('confirmPassword').notEmpty().withMessage('Confirm password can not be empty.'),
   ],
+
+  // 1) Product Validators
+  createProduct: [
+    body('name').notEmpty().withMessage('Name can not be empty.'),
+    body('description').notEmpty().withMessage('Description can not be empty.'),
+    body('sku').notEmpty().withMessage('Sku can not be empty.'),
+    body('category').notEmpty().withMessage('Category can not be empty.'),
+    body('price').notEmpty().isNumeric().withMessage('Price must be number and can not be empty.'),
+  ],
 };
 
 exports.validateResponse = (req, res, next) => {

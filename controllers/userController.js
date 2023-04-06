@@ -1,31 +1,8 @@
-const multer = require('multer');
 const User = require('../models/userModel');
 const APIFeature = require('../utility/apiFeature');
 const AppError = require('../utility/appError');
 const catchAsync = require('../utility/catchAsync');
-
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-  },
-});
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Not an image. Please upload only image.', 400), false);
-  }
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
+const upload = require('../utility/multer');
 
 exports.uploadUserPhoto = upload.single('profilePic');
 
@@ -88,4 +65,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     status: 'success',
     data: updatedUser,
   });
+});
+
+exports.getMe = catchAsync(async (req, res, next) => {
+  res.status(200).json({ status: 'success', data: req.user });
 });

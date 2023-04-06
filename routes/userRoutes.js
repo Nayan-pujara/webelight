@@ -22,6 +22,7 @@ router.patch(
   userController.uploadUserPhoto,
   userController.updateMe
 );
+router.get('/getMe', authController.authenticate, userController.getMe);
 
 router.get('/', authController.authenticate, authController.restrictTo('admin'), userController.getAllUsers);
 router
